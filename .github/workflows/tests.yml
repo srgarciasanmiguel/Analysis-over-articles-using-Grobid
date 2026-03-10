@@ -25,7 +25,7 @@ jobs:
         run: pip install -r requirements.txt pytest
 
       - name: Run unit tests (no GROBID)
-        run: pytest tests/unit/ -v
+        run: pytest tests/unit/unit_tests.py -v
 
   # ── Slow: real GROBID, runs on push to main or nightly ────────────
   integration-tests:
@@ -42,7 +42,7 @@ jobs:
           --health-interval 15s
           --health-timeout 10s
           --health-retries 10
-          --health-start-period 60s   # GROBID is slow to boot
+          --health-start-period 60s
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +64,6 @@ jobs:
           done
 
       - name: Run integration tests (real GROBID)
-        run: pytest tests/integration/ -v
+        run: pytest tests/integration/int_tests.py -v
         env:
           GROBID_URL: http://localhost:8070
