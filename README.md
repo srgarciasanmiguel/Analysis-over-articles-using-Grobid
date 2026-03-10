@@ -13,6 +13,7 @@
 3. [Pipeline](#pipeline)
 4. [Installation](#installation)
 5. [Validation](#validation)
+6. [License](#license)
 
 ## Overview
 
