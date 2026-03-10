@@ -13,7 +13,7 @@ Working versions:
 - 3.12
 - 3.11
 - 3.10
-- it does not work on 3.9
+- It does not work on 3.9
 
 The pipeline performs:
 
@@ -62,11 +62,15 @@ conda activate grobid-analysis
 
 docker run --rm -p 8070:8070 8070:8070 grobid/grobid:0.8.2-crf
 
+    - This is the version I have used because it is lighter, so it is faster for tests. The program should work with other versions of grobid without any issues.
+
 ### Run Scripts
 
 python3 script/grobid_analisis.py
 
 ## Docker Installation
+
+To use other version of grobid change line 4 in docker compose.
 
 docker compose up --build
 

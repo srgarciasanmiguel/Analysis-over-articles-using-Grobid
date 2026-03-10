@@ -68,7 +68,7 @@ def process_pdf_with_grobid(pdf_path: str, grobid_url: str) -> str | None:
         with open(pdf_path, "rb") as fh:
             response = requests.post(
                 endpoint,
-                files={"input": (os.path.basename(pdf_path), fh, "application/pdf")},
+                files={"input": (os.path.basename(pdf_path), fh, "app/data")},
                 data={"consolidateHeader": "1", "consolidateCitations": "0"},
                 timeout=120,
             )
@@ -81,7 +81,7 @@ def process_pdf_with_grobid(pdf_path: str, grobid_url: str) -> str | None:
         print(
             f"\n[ERROR] Cannot connect to GROBID at {grobid_url}.\n"
             "  → Start it with:\n"
-            "    docker run --rm -p 8070:8070 lfoppiano/grobid:0.8.0\n"
+            "    docker run --rm -p 8070:8070 8070:8070 grobid/grobid:0.8.2-crf\n" 
         )
         sys.exit(1)
 

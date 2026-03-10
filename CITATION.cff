@@ -4,6 +4,6 @@ message: "If you use this software, please cite it."
 authors:
   - family-names: Rodríguez García San Miguel
     given-names: Santiago
-doi: 10.5281/zenodo.18931884
+doi: 10.5281/zenodo.18931883
 date-released: 2026-03-10
 url: https://github.com/srgarciasanmiguel/Analisis-over-articles-using-Grobid

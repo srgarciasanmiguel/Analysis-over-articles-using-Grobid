@@ -13,6 +13,6 @@ RUN pip install -r requirements.txt
 
 COPY grobid_analysis.py .
 
-RUN mkdir -p /data /results
+RUN mkdir -p app/data app/results
 
-CMD ["python", "grobid_analysis.py"]
+CMD ["python", "grobid_analysis.py", "--grobid_url", "http://grobid:8070"]
