@@ -1,8 +1,18 @@
 FROM python:3.12.3
 
-WORKDIR /Analisis-over-articles-using-Grobid
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        libfreetype6-dev \
+        libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+WORKDIR /app
+
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-CMD ["python", "scripts/abstract_wordcloud.py"]
+COPY grobid_analysis.py .
+
+RUN mkdir -p /data /results
+
+CMD ["python", "grobid_analysis.py"]

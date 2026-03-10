@@ -1,15 +1,25 @@
-version: "3"
-
 services:
 
   grobid:
     image: grobid/grobid:0.8.2-crf
+    container_name: grobid
     ports:
       - "8070:8070"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "hhtp://localhost:8070/api/isalive"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
-  grobid-analysis:
+  grobid_analysis:
     build: .
-    volumes:
-      - .:/Analisis-over-articles-using-Grobid
+    container_name: grobid_analysis
     depends_on:
-      - grobid
+      grobid:
+        condition: service_healthy
+    volumes:
+      - ./data:/data
+      - ./results:/results
+    environment:
+      - PYTHONUNBUFFERED=1
