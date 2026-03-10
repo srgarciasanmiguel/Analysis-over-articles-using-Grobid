@@ -1,4 +1,5 @@
 .venv
-results/*
+*png
 __pycache__
 .pytest_cache
+links_report.txt

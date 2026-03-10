@@ -2,6 +2,14 @@
 
 [![DOI](https://zenodo.org/badge/1172867391.svg)](https://doi.org/10.5281/zenodo.18931883)
 
+## Index
+
+1. [Overview](#overview)
+2. [Data](#data)
+3. [Pipeline](#pipeline)
+4. [Installation](#installation)
+5. [Validation](#validation)
+
 ## Overview
 
 This project analyzes research papers using Grobid to extract structured information from PDFs.
@@ -46,17 +54,20 @@ The pipeline performs:
 
 1. Convert PDFs → TEI XML using Grobid
 2. Extract abstracts
-3. Generate keyword cloud
-4. Count figures per paper
-5. Extract URLs
+3. Count figures per paper
+4. Extract URLs
+5. Generate keyword cloud
+6. Create a visualization showing the number of figures per article
+7. Create a list of the links found in each paper
 
 ## Installation
 
 ### Environment Setup
-
+```
 conda env create -f environment.yml
 
 conda activate grobid-analysis
+```
 
 ### Run Grobid
 
@@ -72,6 +83,16 @@ python3 script/grobid_analisis.py
 
 To use other version of grobid change line 4 in docker compose.
 
+To build it, and run it, for the first time, or if changes have been made:
+```
 docker compose up --build
+```
 
+To run it:
+```
 docker compose run --rm grobid_analysis
+```
+
+## Validation
+
+wip
