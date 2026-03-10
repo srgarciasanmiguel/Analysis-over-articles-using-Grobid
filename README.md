@@ -73,7 +73,7 @@ conda activate grobid-analysis
 
 docker run --rm -p 8070:8070 8070:8070 grobid/grobid:0.8.2-crf
 
-    - This is the version I have used because it is lighter, so it is faster for tests. The program should work with other versions of grobid without any issues.
+- This is the version I have used because it is lighter, so it is faster for tests. The program should work with other versions of grobid without any issues.
 
 ### Run Scripts
 
