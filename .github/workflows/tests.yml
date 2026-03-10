@@ -1,0 +1,69 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+
+  # ── Fast: no GROBID needed, runs on every commit ──────────────────
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Run unit tests (no GROBID)
+        run: pytest tests/unit/ -v
+
+  # ── Slow: real GROBID, runs on push to main or nightly ────────────
+  integration-tests:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+
+    services:
+      grobid:
+        image: lfoppiano/grobid:0.8.0
+        ports:
+          - 8070:8070
+        options: >-
+          --health-cmd "curl -f http://localhost:8070/api/isalive"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 60s   # GROBID is slow to boot
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Wait for GROBID to be ready
+        run: |
+          echo "Waiting for GROBID..."
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:8070/api/isalive && echo "GROBID is up!" && break
+            echo "Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+      - name: Run integration tests (real GROBID)
+        run: pytest tests/integration/ -v
+        env:
+          GROBID_URL: http://localhost:8070
