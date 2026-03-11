@@ -1,4 +1,4 @@
-# Analisis-over-articles-using-Grobid
+# Analysis-over-articles-using-Grobid
 
 [![DOI](https://zenodo.org/badge/1172867391.svg)](https://doi.org/10.5281/zenodo.18931883)
 
@@ -9,31 +9,37 @@
 ## Index
 
 1. [Overview](#overview)
-2. [Data](#data)
-3. [Pipeline](#pipeline)
-4. [Installation](#installation)
-5. [Validation](#validation)
-6. [License](#license)
+2. [Prerequisites](#prerequisites)
+3. [Data](#data)
+4. [Pipeline](#pipeline)
+5. [Installation](#installation)
+6. [Usage](#usage)
+7. [Output](#output)
+8. [Validation](#validation)
+9. [License](#license)
 
 ## Overview
 
-This project analyzes research papers using Grobid to extract structured information from PDFs.
+This project is a tool meant to analize academic papers, in PDF format, using Grobid, extracting information of each paper and generating a visual representation of the data.
 
-Developed on python 3.12.3
+It extracts the abstract of each paper to create a keyword cloud, counts the figures of each paper and extracts the links present in the papers.
 
-Working versions:
+## Prerequisites
 
-- 3.12
-- 3.11
-- 3.10
-- It does not work on 3.9
+- Docker
+- Python 3.10 or newer
+- Conda (optional)
 
-The pipeline performs:
+### Compatibility
 
-- Abstract extraction
-- Keyword cloud generation
-- Figure counting
-- Link extraction
+| Component | Version |
+|-----------|---------|
+| Python    | 3.10 – 3.12 (developed on 3.12.3) |
+| Grobid    | 0.8.2-crf (default) |
+
+> ⚠️ Python 3.9 and below are **not supported**.
+
+The default Grobid image (`grobid:0.8.2-crf`) is the lightweight CRF-only variant, chosen for faster processing during testing. Heavier full-ML images can be swapped in for improved extraction reliability — browse available tags on [Docker Hub](https://hub.docker.com/r/grobid/grobid/tags).
 
 ## Data
 
@@ -67,28 +73,46 @@ The pipeline performs:
 
 ## Installation
 
-### Environment Setup
+Install the repository:
+```
+git clone https://github.com/srgarciasanmiguel/Analysis-over-articles-using-Grobid.git
+```
+
+## Usage
+
+Go to the project directory:
+```
+cd Analysis-over-articles-using-Grobid
+```
+
+Copy the PDF files of the papers to analize in the `/data` folder
+
+> ⚠️ There are already 13 papers there, the ones listed in [data](#data), that were used for developing and testing the system. Remove them before using.
+
+### Local Setup
+
+Environment setup (optional):
 ```
 conda env create -f environment.yml
 
 conda activate grobid-analysis
 ```
+> Creates the same environment that it was used to develop this system.
 
-### Run Grobid
+Run Grobid:
 ```
-docker run --rm -p 8070:8070 8070:8070 grobid/grobid:0.8.2-crf
+docker run --rm -p 8070:8070 grobid/grobid:0.8.2-crf
 ```
-This is the version I have used because it is lighter, so it is faster for tests. The program should work with other versions of grobid without any issues.
+> In order to use other version of Grobid run that version instead.
 
-### Run Script
-
+Run script
 ```
 python3 script/grobid_analisis.py
 ```
 
-## Docker Installation
+### Docker Setup
 
-To use other version of grobid change line 4 in docker compose.
+> To use other version of grobid change line 4 in `docker-compose.yml`.
 
 To build it, and run it, for the first time, or if changes have been made:
 ```
@@ -99,10 +123,31 @@ To run it:
 ```
 docker compose run --rm grobid_analysis
 ```
+> Using this command leaves grobid running so remember to stop/kill it when it is no longer needed.
+
+## Output
+
+The program generates three files in the folder `/results` that will be created if it has not been yet:
+
+1. figures_per_article.png
+2. links_report.txt
+3. wordcloud.png
+
+![wordcloud_example](image.png)
+
+![figures_per_article_example](image-1.png)
 
 ## Validation
 
-wip
+The results have been validated manually for over 20 papers.
+
+The keyword cloud generates correctly as long as the paper specifies which part is the abstract.
+
+The figures sometimes detects a table as a figure and counts it as so.
+
+The links as long as the link directs to a website and is clickable in the PDF is counted correctly. If it is a link to a part of the document it is not counted.
+
+> Tested on 20+ papers — edge cases may exist beyond those documented above.
 
 ## License
 

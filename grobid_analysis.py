@@ -291,7 +291,7 @@ def main(pdf_dir: str, grobid_url: str) -> None:
         sys.exit(1)
 
     print(f"\n{'='*60}")
-    print(f"  GROBID Paper Analyser  –  {len(pdf_files)} PDF(s) found")
+    print(f"  GROBID Paper analizer  –  {len(pdf_files)} PDF(s) found")
     print(f"  GROBID endpoint : {grobid_url}")
     print(f"  Output folder   : {os.path.abspath(OUTPUT_DIR)}")
     print(f"{'='*60}\n")
@@ -376,13 +376,13 @@ def main(pdf_dir: str, grobid_url: str) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Analyse academic PDFs with GROBID",
+        description="analize academic PDFs with GROBID",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "--pdf_dir",
         default=DEFAULT_PDF_DIR,
-        help="Directory containing the PDF papers to analyse",
+        help="Directory containing the PDF papers to analize",
     )
     parser.add_argument(
         "--grobid_url",
