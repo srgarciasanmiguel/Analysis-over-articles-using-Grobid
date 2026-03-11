@@ -147,7 +147,7 @@ The figures sometimes detects a table as a figure and counts it as so.
 
 The links as long as the link directs to a website and is clickable in the PDF is counted correctly. If it is a link to a part of the document it is not counted.
 
-> Tested on 20+ papers — edge cases may exist beyond those documented above.
+> ⚠️ Tested on 20+ papers — edge cases may exist beyond those documented above.
 
 ## License
 
