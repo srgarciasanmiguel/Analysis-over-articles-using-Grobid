@@ -34,7 +34,7 @@ _wc_stub.WordCloud = _FakeWordCloud
 _wc_stub.STOPWORDS = set()
 sys.modules.setdefault("wordcloud", _wc_stub)
 
-import grobid_analysis as ga  # noqa: E402
+import src.grobid_analysis as ga
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -331,7 +331,7 @@ class TestShortenTitle(unittest.TestCase):
 
 class TestProcessPdfWithGrobid(unittest.TestCase):
 
-    @patch("grobid_analysis.requests.post")
+    @patch("src.grobid_analysis.requests.post")
     @patch("builtins.open", mock_open(read_data=b"%PDF-1.4"))
     def test_returns_tei_xml_on_200(self, mock_post):
         mock_post.return_value = MagicMock(status_code=200, text=FULL_TEI)
@@ -340,14 +340,14 @@ class TestProcessPdfWithGrobid(unittest.TestCase):
             FULL_TEI,
         )
 
-    @patch("grobid_analysis.requests.post")
+    @patch("src.grobid_analysis.requests.post")
     @patch("builtins.open", mock_open(read_data=b"%PDF-1.4"))
     def test_returns_none_on_non_200(self, mock_post):
         mock_post.return_value = MagicMock(status_code=503)
         self.assertIsNone(ga.process_pdf_with_grobid("paper.pdf", "http://localhost:8070"))
 
     @patch(
-        "grobid_analysis.requests.post",
+        "src.grobid_analysis.requests.post",
         side_effect=__import__("requests").exceptions.ConnectionError,
     )
     @patch("builtins.open", mock_open(read_data=b"%PDF-1.4"))
@@ -355,7 +355,7 @@ class TestProcessPdfWithGrobid(unittest.TestCase):
         with self.assertRaises(SystemExit):
             ga.process_pdf_with_grobid("paper.pdf", "http://localhost:8070")
 
-    @patch("grobid_analysis.requests.post")
+    @patch("src.grobid_analysis.requests.post")
     @patch("builtins.open", mock_open(read_data=b"%PDF-1.4"))
     def test_posts_to_correct_endpoint(self, mock_post):
         mock_post.return_value = MagicMock(status_code=200, text="")
@@ -365,7 +365,7 @@ class TestProcessPdfWithGrobid(unittest.TestCase):
             "http://grobid.server:8080/api/processFulltextDocument",
         )
 
-    @patch("grobid_analysis.requests.post")
+    @patch("src.grobid_analysis.requests.post")
     @patch("builtins.open", mock_open(read_data=b"%PDF-1.4"))
     def test_sends_consolidate_header_param(self, mock_post):
         mock_post.return_value = MagicMock(status_code=200, text="")
@@ -428,8 +428,8 @@ class TestBuildWordcloud(unittest.TestCase):
         inst.generate.return_value = inst
         return inst
 
-    @patch("grobid_analysis.plt")
-    @patch("grobid_analysis.WordCloud")
+    @patch("src.grobid_analysis.plt")
+    @patch("src.grobid_analysis.WordCloud")
     def test_saves_to_expected_path(self, MockWC, mock_plt):
         MockWC.return_value = self._mock_wc()
         fig = MagicMock()
@@ -437,15 +437,15 @@ class TestBuildWordcloud(unittest.TestCase):
         ga.build_wordcloud("neural networks deep learning", "/out/wordcloud.png")
         self.assertEqual(fig.savefig.call_args[0][0], "/out/wordcloud.png")
 
-    @patch("grobid_analysis.plt")
-    @patch("grobid_analysis.WordCloud")
+    @patch("src.grobid_analysis.plt")
+    @patch("src.grobid_analysis.WordCloud")
     def test_skips_on_empty_text(self, MockWC, mock_plt):
         ga.build_wordcloud("   ", "/out/wordcloud.png")
         MockWC.assert_not_called()
         mock_plt.subplots.assert_not_called()
 
-    @patch("grobid_analysis.plt")
-    @patch("grobid_analysis.WordCloud")
+    @patch("src.grobid_analysis.plt")
+    @patch("src.grobid_analysis.WordCloud")
     def test_calls_generate_with_text(self, MockWC, mock_plt):
         inst = self._mock_wc()
         MockWC.return_value = inst
@@ -453,8 +453,8 @@ class TestBuildWordcloud(unittest.TestCase):
         ga.build_wordcloud("machine learning transformers", "/out/wc.png")
         inst.generate.assert_called_once_with("machine learning transformers")
 
-    @patch("grobid_analysis.plt")
-    @patch("grobid_analysis.WordCloud")
+    @patch("src.grobid_analysis.plt")
+    @patch("src.grobid_analysis.WordCloud")
     def test_closes_figure_after_save(self, MockWC, mock_plt):
         MockWC.return_value = self._mock_wc()
         fig = MagicMock()
@@ -482,18 +482,18 @@ class TestBuildFigureChart(unittest.TestCase):
         mock_plt.MaxNLocator.return_value = MagicMock()
         return fig, ax
 
-    @patch("grobid_analysis.plt")
+    @patch("src.grobid_analysis.plt")
     def test_saves_to_expected_path(self, mock_plt):
         fig, _ = self._setup_plt(mock_plt)
         ga.build_figure_chart(self.DATA, "/out/figures.png")
         self.assertEqual(fig.savefig.call_args[0][0], "/out/figures.png")
 
-    @patch("grobid_analysis.plt")
+    @patch("src.grobid_analysis.plt")
     def test_skips_on_empty_data(self, mock_plt):
         ga.build_figure_chart([], "/out/figures.png")
         mock_plt.subplots.assert_not_called()
 
-    @patch("grobid_analysis.plt")
+    @patch("src.grobid_analysis.plt")
     def test_passes_correct_labels_and_counts(self, mock_plt):
         _, ax = self._setup_plt(mock_plt)
         ga.build_figure_chart(self.DATA, "/out/figures.png")
@@ -501,7 +501,7 @@ class TestBuildFigureChart(unittest.TestCase):
         self.assertEqual(labels, ["Paper A", "Paper B", "Paper C"])
         self.assertEqual(counts, [3, 0, 7])
 
-    @patch("grobid_analysis.plt")
+    @patch("src.grobid_analysis.plt")
     def test_closes_figure_after_save(self, mock_plt):
         fig, _ = self._setup_plt(mock_plt)
         ga.build_figure_chart(self.DATA, "/out/figures.png")
@@ -516,19 +516,19 @@ class TestMainOrchestration(unittest.TestCase):
 
     def _patch_all(self, pdf_files, grobid_return=FULL_TEI):
         return [
-            patch("grobid_analysis.os.makedirs"),
-            patch("grobid_analysis.glob.glob", return_value=pdf_files),
-            patch("grobid_analysis.process_pdf_with_grobid", return_value=grobid_return),
-            patch("grobid_analysis.build_wordcloud"),
-            patch("grobid_analysis.build_figure_chart"),
-            patch("grobid_analysis.build_links_report"),
+            patch("src.grobid_analysis.os.makedirs"),
+            patch("src.grobid_analysis.glob.glob", return_value=pdf_files),
+            patch("src.grobid_analysis.process_pdf_with_grobid", return_value=grobid_return),
+            patch("src.grobid_analysis.build_wordcloud"),
+            patch("src.grobid_analysis.build_figure_chart"),
+            patch("src.grobid_analysis.build_links_report"),
         ]
 
     def test_calls_all_three_output_builders(self):
         patches = self._patch_all(["p1.pdf", "p2.pdf"])
         with ExitStack() as stack:
             mocks = [stack.enter_context(p) for p in patches]
-            ga.main("./data", "http://localhost:8070")
+            ga.main("./docs/data", "http://localhost:8070", "./docs/results")
             wc, chart, links = mocks[3], mocks[4], mocks[5]
             wc.assert_called_once()
             chart.assert_called_once()
@@ -539,20 +539,20 @@ class TestMainOrchestration(unittest.TestCase):
         with ExitStack() as stack:
             [stack.enter_context(p) for p in patches]
             with self.assertRaises(SystemExit):
-                ga.main("./empty", "http://localhost:8070")
+                ga.main("./empty", "http://localhost:8070", "./docs/results")
 
     def test_exits_when_all_grobid_calls_fail(self):
         patches = self._patch_all(["bad.pdf"], grobid_return=None)
         with ExitStack() as stack:
             [stack.enter_context(p) for p in patches]
             with self.assertRaises(SystemExit):
-                ga.main("./data", "http://localhost:8070")
+                ga.main("./docs/data", "http://localhost:8070", "./docs/results")
 
     def test_deduplicates_pdf_list(self):
         patches = self._patch_all(["p1.pdf", "p1.pdf", "p2.pdf"])
         with ExitStack() as stack:
             mocks = [stack.enter_context(p) for p in patches]
-            ga.main("./data", "http://localhost:8070")
+            ga.main("./docs/data", "http://localhost:8070", "./docs/results")
             # p1.pdf deduplicated → only 2 unique PDFs processed
             self.assertEqual(mocks[2].call_count, 2)
 
@@ -560,7 +560,7 @@ class TestMainOrchestration(unittest.TestCase):
         patches = self._patch_all(["paper.pdf"])
         with ExitStack() as stack:
             mocks = [stack.enter_context(p) for p in patches]
-            ga.main("./data", "http://localhost:8070")
+            ga.main("./docs/data", "http://localhost:8070", "./docs/results")
             chart_data = mocks[4].call_args[0][0]
             self.assertIsInstance(chart_data, list)
             self.assertEqual(len(chart_data), 1)

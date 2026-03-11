@@ -25,9 +25,9 @@ jobs:
         run: pip install -r requirements.txt pytest
 
       - name: Run unit tests (no GROBID)
-        run: pytest tests/unit/unit_tests.py -v
+        run: pytest docs/tests/unit/unit_tests.py -v
 
-  # ── Slow: real GROBID, runs on push to main or nightly ────────────
+  # ── Slow: real GROBID, runs on push to main ───────────────────────
   integration-tests:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
@@ -71,6 +71,6 @@ jobs:
           exit 1
 
       - name: Run integration tests (real GROBID)
-        run: pytest tests/integration/int_tests.py -v
+        run: pytest docs/tests/integration/int_tests.py -v
         env:
           GROBID_URL: http://localhost:8070

@@ -37,7 +37,7 @@ import requests
 # Configuration from environment (override as needed)
 # ─────────────────────────────────────────────────────────────────────────────
 GROBID_URL = os.environ.get("GROBID_URL", "http://localhost:8070")
-PDF_DIR = os.environ.get("GROBID_TEST_PDF_DIR", "./data")
+PDF_DIR = os.environ.get("GROBID_TEST_PDF_DIR", "./docs/data")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # wordcloud import strategy
@@ -79,7 +79,7 @@ except ImportError:
     _wc_stub.STOPWORDS = set()
     sys.modules["wordcloud"] = _wc_stub
 
-import grobid_analysis as ga  # noqa: E402
+import src.grobid_analysis as ga  # noqa: E402
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -229,14 +229,14 @@ class TestFullPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.out_dir = tempfile.mkdtemp(prefix="grobid_integration_")
-        cls._original_out_dir = ga.OUTPUT_DIR
-        ga.OUTPUT_DIR = cls.out_dir
+        cls._original_out_dir = ga.DEFAULT_OUTPUT_DIR
+        ga.DEFAULT_OUTPUT_DIR = cls.out_dir
         print(f"\n  [integration] Output dir: {cls.out_dir}")
-        ga.main(PDF_DIR, GROBID_URL)
+        ga.main(PDF_DIR, GROBID_URL, cls.out_dir)
 
     @classmethod
     def tearDownClass(cls):
-        ga.OUTPUT_DIR = cls._original_out_dir
+        ga.DEFAULT_OUTPUT_DIR = cls._original_out_dir
         shutil.rmtree(cls.out_dir, ignore_errors=True)
 
     # ── existence ────────────────────────────────────────────────────────────
